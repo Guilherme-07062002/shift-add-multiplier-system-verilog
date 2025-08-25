@@ -4,11 +4,11 @@ module tb_ula_74181;
 
     // Sinais de entrada
     reg [3:0] a, b, s;
-    reg m, c_in;
+    reg m, cin;
     
     // Sinais de saída
     wire [3:0] f;
-    wire a_eq_b, c_out, p, g;
+    wire cout;
     
     // Instanciação da ULA
     ula_74181 uut (
@@ -16,12 +16,9 @@ module tb_ula_74181;
         .b(b),
         .s(s),
         .m(m),
-        .c_in(c_in),
+        .cin(cin),
         .f(f),
-        .a_eq_b(a_eq_b),
-        .c_out(c_out),
-        .p(p),
-        .g(g)
+        .cout(cout)
     );
 
     // Referência/esperados

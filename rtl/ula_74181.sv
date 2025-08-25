@@ -26,17 +26,11 @@ module ula_74181 (
     // as a safe fallback so the module is well-defined for all inputs.
     logic [4:0] sum;
 
-    always_comb begin
-        if (m == 1'b0) begin
-            // arithmetic: add a + b + cin
-            sum = {1'b0, a} + {1'b0, b} + (cin ? 5'd1 : 5'd0);
-            f = sum[3:0];
-            cout = sum[4];
-        end else begin
-            // logical fallback (not used by the multiplier): simple bitwise XOR
-            f = a ^ b;
-            cout = 1'b0;
-        end
-    end
+    // Arithmetic calculation
+    assign sum = {1'b0, a} + {1'b0, b} + (cin ? 1'b1 : 1'b0);
+    
+    // Output assignments based on mode
+    assign f = (m == 1'b0) ? sum[3:0] : (a ^ b);
+    assign cout = (m == 1'b0) ? sum[4] : 1'b0;
 
 endmodule
