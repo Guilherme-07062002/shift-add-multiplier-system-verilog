@@ -59,8 +59,8 @@ module tb_shift_add_multiplier;
                     @(posedge clk);
                     cycles = cycles + 1;
                     // debug: print internal registers and control signals
-                    $display(" cycle=%0d A=0x%0h B=0x%0h Q=0x%0h | sum=0x%0h c_out=%b",
-                        cycles, uut.A_out, uut.B_out, uut.Q_out, uut.sum, uut.c_out);
+                    $display(" cycle=%0d state=%0d cnt=%0d A=0x%0h B=0x%0h Q=0x%0h | sum=0x%0h c_out=%b",
+                        cycles, uut.state, uut.iter_cnt.data_out, uut.A_out, uut.B_out, uut.Q_out, uut.sum, uut.c_out);
             end
 
             // Compute expected result
