@@ -120,6 +120,8 @@ open_vcd() {
                 compile_and_run "ula_74181" "$RTL_DIR/ula_74181.sv" "$TB_DIR/tb_ula_74181.sv" ;;
             "ula_8_bits.vcd")
                 compile_and_run "ula_8_bits" "$RTL_DIR/ula_74181.sv" "$RTL_DIR/ula_8_bits.sv" "$TB_DIR/tb_ula_8_bits.sv" ;;
+            "shift_add_multiplier.vcd")
+                compile_and_run "shift_add_multiplier" "$RTL_DIR/ula_74181.sv" "$RTL_DIR/ula_8_bits.sv" "$RTL_DIR/shift_register.sv" "$RTL_DIR/counter.sv" "$RTL_DIR/shift_add_multiplier.sv" "$TB_DIR/tb_shift_add_multiplier.sv" ;;
             *)
                 echo "Não foi possível identificar o teste para $1" ;;
         esac
@@ -140,14 +142,16 @@ show_gtkwave_menu() {
         echo "===== VISUALIZAR ONDAS (GTKWave) ====="
         echo "1. 74181 (ula_74181.vcd)"
         echo "2. ULA 8 bits (ula_8_bits.vcd)"
-        echo "3. Voltar"
+        echo "3. Multiplicador Shift-Add (shift_add_multiplier.vcd)"
+        echo "4. Voltar"
         echo "======================================"
         echo -n "Escolha uma opção: "
         read -r opt
         case $opt in
             1) open_vcd "ula_74181.vcd" ;;
             2) open_vcd "ula_8_bits.vcd" ;;
-            3) break ;;
+            3) open_vcd "shift_add_multiplier.vcd" ;;
+            4) break ;;
             *) echo "Opção inválida!"; read -r -p "Pressione ENTER para continuar..." ;;
         esac
     done
