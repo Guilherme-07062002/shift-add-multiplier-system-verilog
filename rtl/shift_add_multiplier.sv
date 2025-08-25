@@ -48,10 +48,10 @@ module shift_add_multiplier (
     // ALU for A + B (combinational)
     logic [7:0] sum;
     logic c_out;
-    wire aeqb, overflow, p, g, c_intermediate;
+    // ula_8_bits ports: (a,b,s,m,cin,f,cout)
     ula_8_bits alu (
-        .a(A_out), .b(B_out), .s(4'b1001), .m(1'b0), .c_in(1'b0),
-        .f(sum), .a_eq_b(aeqb), .c_out(c_out), .overflow(overflow), .p(p), .g(g), .c_intermediate(c_intermediate)
+        .a(A_out), .b(B_out), .s(4'b1001), .m(1'b0), .cin(1'b0),
+        .f(sum), .cout(c_out)
     );
 
     // FSM states
