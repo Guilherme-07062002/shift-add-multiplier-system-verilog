@@ -95,7 +95,7 @@ module tb_ula_8_bits_simple;
     endtask
 
     initial begin
-        $dumpfile("sim/ula_8_bits.vcd");
+    $dumpfile("../sim/ula_8_bits.vcd");
         $dumpvars(0, tb_ula_8_bits_simple);
         
         $display("=== Teste da ULA 8 bits (Versão Simplificada) ===");

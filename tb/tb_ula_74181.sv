@@ -94,7 +94,7 @@ module tb_ula_74181_simple;
     endtask
 
     initial begin
-        $dumpfile("sim/ula_74181.vcd");
+    $dumpfile("../sim/ula_74181.vcd");
         $dumpvars(0, tb_ula_74181_simple);
         
         $display("=== Teste da ULA 74181 (Versão Simplificada) ===");
