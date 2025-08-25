@@ -17,7 +17,7 @@ module counter #(
 
     // --- Saídas ---
     output logic [N-1:0] data_out, // Valor atual do contador
-    output logic end_count         // Indica que o contador chegou a zero (ativo alto)
+    output logic end_flag          // Indica que o contador chegou a zero (ativo alto)
 );
 
     // Registrador interno que armazena o valor da contagem.
@@ -44,6 +44,6 @@ module counter #(
     // Saídas combinacionais são atribuídas continuamente.
     assign data_out = count_reg;
     // Use um literal de tamanho para comparação segura
-    assign end_count = (count_reg == {N{1'b0}}); // 'end_count' é 1 se o contador for zero.
+    assign end_flag = (count_reg == {N{1'b0}}); // 'end_flag' é 1 se o contador for zero.
 
 endmodule

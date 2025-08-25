@@ -42,7 +42,7 @@ module shift_add_multiplier (
     // Instantiate counter
     counter #(.N(8)) iter_cnt (
         .clk(clk), .rst(rst), .load(cnt_load), .en(cnt_en), .up_down(cnt_up_down),
-        .data_in(cnt_data_in), .data_out(cnt_data_out), .end_count(cnt_end)
+        .data_in(cnt_data_in), .data_out(cnt_data_out), .end_flag(cnt_end)
     );
 
     // ALU for A + B (combinational)

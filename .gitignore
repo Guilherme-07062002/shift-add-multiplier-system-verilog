@@ -21,3 +21,5 @@ relatorio.pdf
 
 # Diretório de trabalho do GTKWave (se ele criar)
 gtkwave/
+
+*.txt

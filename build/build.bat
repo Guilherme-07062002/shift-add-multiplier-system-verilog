@@ -32,18 +32,20 @@ REM Função para compilar e executar um testbench
 
 :main_menu
 cls
-echo ===== MENU DE TESTES ULA =====
+echo ===== MENU DE TESTES =====
 echo 1. ULA de 4 bits (74181)
 echo 2. ULA de 8 bits
-echo 3. Visualizar ondas ^(GTKWave^)
-echo 4. Sair
+echo 3. Multiplicador Shift-Add
+echo 4. Visualizar ondas ^(GTKWave^)
+echo 5. Sair
 echo =============================
 set /p main_option=Escolha uma opcao: 
 
 if "%main_option%"=="1" goto menu_ula_4bits
 if "%main_option%"=="2" goto menu_ula_8bits
-if "%main_option%"=="3" goto menu_gtkwave
-if "%main_option%"=="4" goto exit
+if "%main_option%"=="3" goto menu_multiplier
+if "%main_option%"=="4" goto menu_gtkwave
+if "%main_option%"=="5" goto exit
 echo Opcao invalida! Pressione qualquer tecla para continuar...
 pause > nul
 goto main_menu
@@ -115,6 +117,24 @@ if exist "%VCD_FILE%" (
         echo GTKWave nao encontrado no PATH. Instale o GTKWave ou adicione-o ao PATH.
         echo Baixe em: http://gtkwave.sourceforge.net/
         goto :eof
+
+        :menu_multiplier
+        cls
+        echo ===== TESTES PARA MULTIPLICADOR SHIFT-ADD =====
+        echo 1. Executar Testbench Completo (tb_shift_add_multiplier)
+        echo 2. Voltar
+        echo ============================================
+        set /p sub_option=Escolha uma opcao: 
+
+        if "%sub_option%"=="1" (
+            call :compile_and_run "shift_add_multiplier" "%RTL_DIR%\ula_74181.sv" "%RTL_DIR%\ula_8_bits.sv" "%RTL_DIR%\shift_register.sv" "%RTL_DIR%\counter.sv" "%RTL_DIR%\shift_add_multiplier.sv" "%TB_DIR%\tb_shift_add_multiplier.sv"
+            pause
+            goto menu_multiplier
+        )
+        if "%sub_option%"=="2" goto main_menu
+        echo Opcao invalida! Pressione qualquer tecla para continuar...
+        pause > nul
+        goto menu_multiplier
     )
     echo Abrindo %VCD_FILE% no GTKWave...
     start "GTKWave" gtkwave "%VCD_FILE%"

@@ -42,11 +42,12 @@ compile_and_run() {
 
 # Função para exibir o menu principal
 show_main_menu() {
-    echo "===== MENU DE TESTES ULA ====="
+    echo "===== MENU DE TESTES ====="
     echo "1. ULA de 4 bits (74181)"
     echo "2. ULA de 8 bits"
-    echo "3. Visualizar ondas (GTKWave)"
-    echo "4. Sair"
+    echo "3. Multiplicador Shift-Add"
+    echo "4. Visualizar ondas (GTKWave)"
+    echo "5. Sair"
     echo "============================="
     echo "Escolha uma opção: "
 }
@@ -82,6 +83,19 @@ run_ula_8bits() {
             compile_and_run "ula_8_bits" "$RTL_DIR/ula_74181.sv" "$RTL_DIR/ula_8_bits.sv" "$TB_DIR/tb_ula_8_bits.sv"
             ;;
         *) 
+            echo "Opção inválida!"
+            ;;
+    esac
+}
+
+# Função para executar os testes do multiplicador Shift-Add
+run_multiplier() {
+    local option=$1
+    case $option in
+        1)
+            compile_and_run "shift_add_multiplier" "$RTL_DIR/ula_74181.sv" "$RTL_DIR/ula_8_bits.sv" "$RTL_DIR/shift_register.sv" "$RTL_DIR/counter.sv" "$RTL_DIR/shift_add_multiplier.sv" "$TB_DIR/tb_shift_add_multiplier.sv"
+            ;;
+        *)
             echo "Opção inválida!"
             ;;
     esac
@@ -164,9 +178,21 @@ while true; do
             done
             ;;
         3)
-            show_gtkwave_menu
+            while true; do
+                echo "===== TESTES PARA MULTIPLICADOR SHIFT-ADD ====="
+                echo "1. Executar Testbench Completo"
+                echo "2. Voltar"
+                echo "============================================"
+                read -r sub_option
+                if [ "$sub_option" == "2" ]; then break; fi
+                run_multiplier "$sub_option"
+                echo "Pressione ENTER para continuar..."; read -r
+            done
             ;;
         4)
+            show_gtkwave_menu
+            ;;
+        5)
             echo "Saindo do programa..."; exit 0
             ;;
         *)
