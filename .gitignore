@@ -1,0 +1,23 @@
+# Arquivos de simulação e compilação do Icarus Verilog
+*.vvp
+*.vcd
+iverilog.log
+vvp.log
+
+# Arquivos de backup do Gedit (se usar)
+*~
+# Arquivos de backup do Vim (se usar)
+*.swp
+*.swo
+
+# Arquivos temporários do sistema operacional
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Relatório
+# Se o relatório for gerado a partir de outros arquivos (ex: .tex, .docx),
+# você pode ignorar o PDF gerado. Se você o escreve diretamente e quer versionar, remova esta linha.
+relatorio.pdf
+
+# Diretório de trabalho do GTKWave (se ele criar)
+gtkwave/
