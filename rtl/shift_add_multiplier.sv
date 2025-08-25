@@ -54,13 +54,13 @@ module shift_add_multiplier (
         .f(sum), .cout(c_out)
     );
 
-    // FSM states
-    localparam logic [2:0] S_LOAD        = 3'b000;
-    localparam logic [2:0] S_LOAD_WAIT   = 3'b001; // give synchronous loads a cycle to settle
-    localparam logic [2:0] S_RUN_COMPUTE = 3'b010; // compute next A/Q based on Q[0]
-    localparam logic [2:0] S_RUN_LOAD    = 3'b011; // assert parallel load with precomputed values
-    localparam logic [2:0] S_DONE        = 3'b100;
-    logic [2:0] state, next_state;
+    // FSM states (use Verilog-compatible localparam and reg for wider tool support)
+    localparam [2:0] S_LOAD        = 3'b000;
+    localparam [2:0] S_LOAD_WAIT   = 3'b001; // give synchronous loads a cycle to settle
+    localparam [2:0] S_RUN_COMPUTE = 3'b010; // compute next A/Q based on Q[0]
+    localparam [2:0] S_RUN_LOAD    = 3'b011; // assert parallel load with precomputed values
+    localparam [2:0] S_DONE        = 3'b100;
+    reg [2:0] state, next_state;
 
     // Default ties for serial inputs (we use parallel loads every iteration)
     assign A_ser_in = 1'b0;
@@ -72,7 +72,9 @@ module shift_add_multiplier (
     logic [7:0] Q_next_comb;
     // temp registers to hold computed values between compute and load states
     logic [7:0] tempA, tempQ;
-    always_comb begin
+    // Combinational next-value logic for A and Q (depends on current A_out,B_out,Q_out and ALU)
+    // Use always @* for broader simulator compatibility
+    always @* begin
         if (Q_out[0]) begin
             // add then shift right: new A = {c_out, sum[7:1]}; new Q = {sum[0], Q_out[7:1]}
             A_next_comb = {c_out, sum[7:1]};
@@ -88,7 +90,8 @@ module shift_add_multiplier (
     // local iteration counter used to control number of runs (keeps decision local and deterministic)
     integer iterations_left;
 
-    always_comb begin
+    // Use always @* for combinational control logic
+    always @* begin
         // defaults
         A_ctrl = 2'b00;
         B_ctrl = 2'b00;
@@ -139,7 +142,8 @@ module shift_add_multiplier (
     end
 
     // Sequential state update and tempA/tempQ/iterations_left management
-    always_ff @(posedge clk or posedge rst) begin
+    // Use classic always block for compatibility
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
             state <= S_LOAD;
             tempA <= 8'd0;
@@ -171,8 +175,8 @@ module shift_add_multiplier (
         end
     end
 
-    // Next-state logic
-    always_comb begin
+    // Next-state logic (combinational)
+    always @* begin
         next_state = state;
         case (state)
             S_LOAD:      next_state = S_LOAD_WAIT; // give one cycle to capture loads
