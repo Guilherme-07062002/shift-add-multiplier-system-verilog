@@ -33,6 +33,8 @@ cd tb
 vvp ../sim/shift_add_multiplier.vvp
 ```
 
+Também é possível rodar o script `build.sh` (no Linux ou macOS) para compilar e executar todos os testes automaticamente. O script `build.bat` (no Windows) oferece funcionalidade semelhante.
+
 O testbench imprimirá informações no terminal e gerará o arquivo VCD: `sim/shift_add_multiplier.vcd`.
 
 1) Visualizar formas-de-onda:
