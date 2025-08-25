@@ -35,24 +35,9 @@ vvp ../sim/shift_add_multiplier.vvp
 
 O testbench imprimirá informações no terminal e gerará o arquivo VCD: `sim/shift_add_multiplier.vcd`.
 
-4) Visualizar formas-de-onda (opcional):
+1) Visualizar formas-de-onda:
 
 ```bash
 gtkwave sim/shift_add_multiplier.vcd
 ```
 
-Observações importantes:
-- A porta de saída do `counter` foi renomeada de `end_count` para `end_flag` (evita palavras reservadas) para ficar clara e consistente.
-- Se estiver usando o Prompt de Comando do Windows (cmd.exe), utilize o script `run_windows.bat` (fornecido) para compilar e executar automaticamente.
-- Se o VCD não for gerado, verifique o caminho do `$dumpfile` no testbench: ele aponta para `../sim/shift_add_multiplier.vcd` quando a simulação é executada a partir de `tb/`.
-
-Ajuda / problemas comuns:
-- Se `iverilog` não estiver instalado, instale-o via pacote do seu sistema (ex: apt, pacman, choco) ou baixe em: http://iverilog.icarus.com/
-- Se `gtkwave` não estiver disponível, instale-o para analisar o VCD.
-
-Alterações recentes:
-- Renomeada a saída do `counter` de `end_count` para `end`.
-
----
-
-Se quiser, posso também gerar um relatório de cobertura de testes ou adicionar asserts no testbench para falhas automáticas.
