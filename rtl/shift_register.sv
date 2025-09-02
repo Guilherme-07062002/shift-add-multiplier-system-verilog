@@ -1,4 +1,6 @@
 
+// Registrador de deslocamento universal parametrizável.
+// ctrl: 00=mantém, 01=shift direita, 10=shift esquerda, 11=carga paralela.
 module shift_register #(
 	parameter N = 8
 ) (
@@ -11,7 +13,7 @@ module shift_register #(
 	output logic ser_out
 );
 
-	// Control signal encoding for clarity
+	// Codificação dos comandos
 	localparam HOLD          = 2'b00;
 	localparam SHIFT_RIGHT   = 2'b01;
 	localparam SHIFT_LEFT    = 2'b10;
@@ -23,22 +25,20 @@ module shift_register #(
 		if (rst) begin
 			reg_data <= '0;
 		end else begin
-			// The case statement defines the register's behavior based on the control signal.
 			case (ctrl)
-				PARALLEL_LOAD: reg_data <= parallel_in;                  // Parallel load
-				SHIFT_LEFT:    reg_data <= {reg_data[N-2:0], ser_in};    // Shift left, ser_in becomes LSB
-				SHIFT_RIGHT:   reg_data <= {ser_in, reg_data[N-1:1]};    // Shift right, ser_in becomes MSB
-				default:       reg_data <= reg_data;                     // Hold value
+				PARALLEL_LOAD: reg_data <= parallel_in;                  // carga
+				SHIFT_LEFT:    reg_data <= {reg_data[N-2:0], ser_in};    // desloca esquerda
+				SHIFT_RIGHT:   reg_data <= {ser_in, reg_data[N-1:1]};    // desloca direita
+				default:       reg_data <= reg_data;                     // mantém
 			endcase
 		end
 	end
 
 	assign parallel_out = reg_data;
 
-	// ser_out is the bit being shifted out of the register.
-	// For a left shift, it's the MSB. For a right shift, it's the LSB.
+	// Bit expelido no deslocamento.
 	assign ser_out = (ctrl == SHIFT_LEFT)  ? reg_data[N-1] :
 					 (ctrl == SHIFT_RIGHT) ? reg_data[0]   :
-					 1'b0; // Default output for non-shift operations
+					 1'b0;
 
 endmodule

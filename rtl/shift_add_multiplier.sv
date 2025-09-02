@@ -1,21 +1,6 @@
-// -----------------------------------------------------------------------------
-// Módulo: shift_add_multiplier
-// Descrição: Implementa multiplicador sequencial 8x8 baseado no algoritmo
-//            clássico Shift-Add. Organização adotada:
-//            - B (multiplicand) permanece fixo em registrador de deslocamento
-//              sem deslocar após carga (somente para leitura e soma condicional).
-//            - Q (multiplier) fornece bits menos significativos sucessivos.
-//            - A inicia em 0 e acumula soma parcial; após cada passo, é feito
-//              deslocamento à direita encadeando (carry_reg, A, Q).
-//            - Após 8 iterações, RESULT = {A, Q}.
-// Estados:
-//   LOAD  -> Carrega A=0, B=multiplicand (fixo), Q=multiplier e contador=8.
-//   ADD   -> Soma condicional A + (Q0?B:0) (A atualizado via carga paralela).
-//   SHIFT -> Desloca A e Q à direita: MSB de A recebe carry_reg; MSB de Q recebe
-//            LSB anterior de A.
-//   DONE  -> Operação concluída; end_op=1.
-// Reinicialização: um reset assíncrono retorna ao estado LOAD.
-// -----------------------------------------------------------------------------
+// Multiplicador sequencial 8x8 (Shift-Add).
+// A acumula somas condicionais (Q0?B); após cada soma desloca (carry_reg,A,Q) à direita.
+// Ao final de 8 ciclos: result = {A,Q}; end_op=1.
 module shift_add_multiplier (
     input  logic        clk,
     input  logic        rst,
@@ -25,7 +10,7 @@ module shift_add_multiplier (
     output logic        end_op
 );
 
-    // === Registradores de deslocamento ===
+    // Registradores
     logic [7:0] A_parallel_in, B_parallel_in, Q_parallel_in;
     logic [7:0] A_out, B_out, Q_out;
     logic       A_ser_in, B_ser_in, Q_ser_in;
@@ -45,7 +30,7 @@ module shift_add_multiplier (
         .parallel_out(Q_out), .ser_out(Q_ser_out)
     );
 
-    // === Contador (controla 8 iterações) ===
+    // Contador
     logic       cnt_load, cnt_en, cnt_up_down;
     logic [7:0] cnt_data_in, cnt_data_out;
     logic       cnt_end; // não usado diretamente para transição (utilizamos valor do contador)
@@ -55,7 +40,7 @@ module shift_add_multiplier (
         // Porta \end do contador não conectada explicitamente aqui; end_flag já é usado.
     );
 
-    // === ULA para soma condicional (A + (Q0?B:0)) ===
+    // ULA
     logic [7:0] sum;
     logic       c_out;
     logic [7:0] addend;
@@ -65,17 +50,17 @@ module shift_add_multiplier (
         .f(sum), .cout(c_out)
     );
 
-    // === FSM === (usar codificação manual para ampla compatibilidade com simuladores)
+    // FSM
     localparam [2:0] S_LOAD  = 3'd0,
                      S_ADD   = 3'd1,
                      S_SHIFT = 3'd2,
                      S_DONE  = 3'd3;
     logic [2:0] state, next_state;
 
-    // Registrador para armazenar carry da soma até o ciclo de shift
+    // Carry entre ADD e SHIFT
     logic carry_reg;
 
-    // Defaults de conexões seriais que dependem do estado
+    // Controle combinacional
     always @* begin
         // Defaults
         A_ctrl = 2'b00; B_ctrl = 2'b00; Q_ctrl = 2'b00;
@@ -91,7 +76,7 @@ module shift_add_multiplier (
                 cnt_load = 1'b1; cnt_data_in = 8'd8; cnt_up_down = 1'b0;
             end
             S_ADD: begin
-                // Executa sempre (se Q0=0, addend=0 e mantém A)
+                // Soma condicional (addend=0 se Q0=0)
                 A_ctrl = 2'b11; A_parallel_in = sum;
             end
             S_SHIFT: begin
@@ -100,9 +85,7 @@ module shift_add_multiplier (
                 Q_ser_in = A_ser_out;
                 cnt_en = 1'b1; cnt_up_down = 1'b0;
             end
-            S_DONE: begin
-                // hold
-            end
+            S_DONE: begin end
         endcase
     end
 
@@ -118,24 +101,24 @@ module shift_add_multiplier (
         endcase
     end
 
-    // Estado / carry_reg sequencial
+    // Sequencial
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             state <= S_LOAD;
             carry_reg <= 1'b0;
         end else begin
             state <= next_state;
-            // Captura carry somente quando há soma
+            // Captura carry
             if (state == S_ADD) begin
                 carry_reg <= c_out;
             end else if (state == S_SHIFT) begin
-                // Após usar o carry num shift, limpa (opcional)
+                // Limpa após SHIFT
                 carry_reg <= 1'b0;
             end
         end
     end
 
-    // Resultado concatenado
+    // Saídas
     assign result = {A_out, Q_out};
     assign end_op = (state == S_DONE);
 
