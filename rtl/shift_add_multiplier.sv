@@ -1,3 +1,21 @@
+// -----------------------------------------------------------------------------
+// Módulo: shift_add_multiplier
+// Descrição: Implementa multiplicador sequencial 8x8 baseado no algoritmo
+//            clássico Shift-Add. Organização adotada:
+//            - B (multiplicand) permanece fixo em registrador de deslocamento
+//              sem deslocar após carga (somente para leitura e soma condicional).
+//            - Q (multiplier) fornece bits menos significativos sucessivos.
+//            - A inicia em 0 e acumula soma parcial; após cada passo, é feito
+//              deslocamento à direita encadeando (carry_reg, A, Q).
+//            - Após 8 iterações, RESULT = {A, Q}.
+// Estados:
+//   LOAD  -> Carrega A=0, B=multiplicand (fixo), Q=multiplier e contador=8.
+//   ADD   -> Soma condicional A + (Q0?B:0) (A atualizado via carga paralela).
+//   SHIFT -> Desloca A e Q à direita: MSB de A recebe carry_reg; MSB de Q recebe
+//            LSB anterior de A.
+//   DONE  -> Operação concluída; end_op=1.
+// Reinicialização: um reset assíncrono retorna ao estado LOAD.
+// -----------------------------------------------------------------------------
 module shift_add_multiplier (
     input  logic        clk,
     input  logic        rst,
@@ -34,6 +52,7 @@ module shift_add_multiplier (
     counter #(.N(8)) iter_cnt (
         .clk(clk), .rst(rst), .load(cnt_load), .en(cnt_en), .up_down(cnt_up_down),
         .data_in(cnt_data_in), .data_out(cnt_data_out), .end_flag(cnt_end)
+        // Porta \end do contador não conectada explicitamente aqui; end_flag já é usado.
     );
 
     // === ULA para soma condicional (A + (Q0?B:0)) ===

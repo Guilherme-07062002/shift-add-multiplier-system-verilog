@@ -17,7 +17,10 @@ module counter #(
 
     // --- Saídas ---
     output logic [N-1:0] data_out, // Valor atual do contador
-    output logic end_flag          // Indica que o contador chegou a zero (ativo alto)
+    output logic end_flag,         // Sinal de fim (equivalente ao requisito "end")
+    // Porta adicional opcional com identificador escapado para corresponder ao nome do enunciado.
+    // Pode ser ignorada em instâncias se não for necessária.
+    output logic \end              // (escaped identifier) Indica fim da contagem (1 quando valor == 0)
 );
 
     // Registrador interno que armazena o valor da contagem.
@@ -27,23 +30,30 @@ module counter #(
     // O bloco é sensível à borda de subida do clock e do reset.
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
-            // O reset assíncrono tem a maior prioridade e zera o contador.
+            // Reset assíncrono zera o contador.
             count_reg <= '0;
         end else begin
             if (load) begin
-                // O carregamento síncrono tem prioridade sobre a contagem.
+                // Carregamento paralelo tem prioridade.
                 count_reg <= data_in;
             end else if (en) begin
-                // A contagem só ocorre se 'en' estiver ativo.
-                count_reg <= up_down ? (count_reg + 1) : (count_reg - 1);
+                if (up_down) begin
+                    // Contagem crescente (não usada neste projeto, mantida para completude)
+                    count_reg <= count_reg + 1'b1;
+                end else begin
+                    // Contagem decrescente com saturação em zero para evitar wrap (atende melhor a ideia de fim fixo)
+                    if (count_reg != {N{1'b0}})
+                        count_reg <= count_reg - 1'b1;
+                    else
+                        count_reg <= count_reg; // mantém zero
+                end
             end
-            // Se 'load' e 'en' estiverem inativos, o valor é mantido (hold).
         end
     end
 
     // Saídas combinacionais são atribuídas continuamente.
-    assign data_out = count_reg;
-    // Use um literal de tamanho para comparação segura
-    assign end_flag = (count_reg == {N{1'b0}}); // 'end_flag' é 1 se o contador for zero.
+    assign data_out  = count_reg;
+    assign end_flag  = (count_reg == {N{1'b0}}); // 'end_flag' é 1 se o contador for zero.
+    assign \end      = end_flag;                 // Alias para o nome solicitado no enunciado.
 
 endmodule
