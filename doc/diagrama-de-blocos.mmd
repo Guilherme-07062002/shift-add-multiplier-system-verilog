@@ -7,11 +7,12 @@ config:
 flowchart TD
     A["Multiplicando A<br>8 bits"] --> FSM["Máquina de Estados<br>FSM"]
     B["Multiplicador B<br>8 bits"] --> FSM
-    CLK["Clock"] --> FSM & RegA["Registrador A<br>Shift Register 8 bits"] & RegB["Registrador B<br>Shift Register 8 bits"] & RegQ["Registrador Q<br>Shift Register 8 bits"] & Counter["Contador<br>8 bits"] & ULA["ULA 8 bits"]
+    CLK["Clock"] --> FSM & RegA["Registrador A<br>Acumulador<br>Shift Register 8 bits"] & RegB["Registrador B<br>Multiplicando<br>Shift Register 8 bits"] & RegQ["Registrador Q<br>Multiplicador<br>Shift Register 8 bits"] & Counter["Contador<br>8 bits"] & ULA["ULA 8 bits"]
     RST["Reset"] --> FSM & RegA & RegB & RegQ & Counter & ULA
     FSM --> RegA & RegB & RegQ & Counter & ULA
     RegA --> ULA & RegQ & Resultado["Resultado<br>16 bits<br>RegA + RegQ"]
     RegB --> ULA
     ULA --> RegA
-    Counter --> FSM
+    ULA -.->|carry| RegA
+    Counter -->|end| FSM
     RegQ --> Resultado
