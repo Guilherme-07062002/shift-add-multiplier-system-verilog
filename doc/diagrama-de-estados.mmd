@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> S0: Reset
+    S0 --> S1: Carregar valores\n(A=0, B=multiplicando, Q=multiplicador, contador=8)
+    S1 --> S2: Q[0] == 1\n(Somar B a A via ULA)
+    S1 --> S3: Q[0] == 0\n(Pular soma)
+    S2 --> S3: Deslocar A direita (carry in), Q direita (ser_in de A)
+    S3 --> S1: Contador > 0\n(Decrementar contador)
+    S3 --> S4: Contador == 0
+    S4 --> [*]: Fim = 1\n(Resultado = A + Q)
