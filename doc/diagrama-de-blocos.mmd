@@ -5,8 +5,8 @@ config:
   theme: mc
 ---
 flowchart TD
-    A["Multiplicando A<br>8 bits"] --> FSM["Máquina de Estados<br>FSM"]
-    B["Multiplicador B<br>8 bits"] --> FSM
+    A["Multiplicando<br>8 bits"] --> FSM["Máquina de Estados<br>FSM"]
+    B["Multiplicador<br>8 bits"] --> FSM
     CLK["Clock"] --> FSM & RegA["Registrador A<br>Acumulador<br>Shift Register 8 bits"] & RegB["Registrador B<br>Multiplicando<br>Shift Register 8 bits"] & RegQ["Registrador Q<br>Multiplicador<br>Shift Register 8 bits"] & Counter["Contador<br>8 bits"] & ULA["ULA 8 bits"]
     RST["Reset"] --> FSM & RegA & RegB & RegQ & Counter & ULA
     FSM -->|ctrlA<br>00:hold<br>01:right<br>10:left<br>11:load| RegA
@@ -14,8 +14,11 @@ flowchart TD
     FSM -->|ctrlQ<br>00:hold<br>01:right<br>10:left<br>11:load| RegQ
     FSM -->|load, en, up_down| Counter
     FSM -->|op| ULA
-    RegA --> ULA & RegQ & Resultado["Resultado<br>16 bits<br>RegA + RegQ"]
+    FSM --> Fim["Fim 1 bit"]
+    RegA --> ULA & RegQ & Resultado["Resultado 16 bits RegA + RegQ"]
     RegB --> ULA
     ULA --> RegA
+    ULA -.->|carry| RegA
     Counter -->|end| FSM
+    RegQ -->|"Q[0]"| FSM
     RegQ --> Resultado
